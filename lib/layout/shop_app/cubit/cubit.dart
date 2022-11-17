@@ -4,9 +4,10 @@ import 'package:mans/layout/shop_app/cubit/states.dart';
 import 'package:mans/modules/shop_app/categories/cateogries_Screen.dart';
 import 'package:mans/modules/shop_app/favorites/favorites_Screen.dart';
 import 'package:mans/modules/shop_app/models/home_model.dart';
-import 'package:mans/modules/shop_app/models/update_date.dart';
 import 'package:mans/modules/shop_app/models/user_data_model.dart';
 import 'package:mans/modules/shop_app/products/products_Screen.dart';
+import 'package:mans/modules/shop_app/search/cubit/cubit.dart';
+import 'package:mans/modules/shop_app/search/cubit/states.dart';
 import 'package:mans/shared/components/components.dart';
 import 'package:mans/shared/network/end_points.dart';
 import 'package:mans/shared/network/remote/dio_helper.dart';
@@ -59,13 +60,13 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
 
   CategoriesModel? categoriesModel;
 
-  void getCategories() {
-    DioHelper.getData(
+  void getCategories()  {
+     DioHelper.getData(
       url: categories,
       token: token,
     ).then((value) {
-      // print(value.toString());
       categoriesModel = CategoriesModel.fromJson(value.data);
+      // print(value.toString());
       emit(ShopAppSuccessCategoriesState());
     }).catchError((error) {
       emit(ShopAppErrorCategoriesState());
@@ -77,7 +78,7 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
 
   void getFavorites() {
     emit(ShopAppLoadingSuccessFavoritesState());
-    DioHelper.getData(
+     DioHelper.getData(
       url: myFavorites,
       token: token,
     ).then((value) {
@@ -92,10 +93,10 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
 
   ChangeFavoritesModel? changeFavoritesModel;
 
-  void changeFavorites(int productId) {
+  void changeFavorites(int productId,context)  {
     favorites[productId] = !favorites[productId]!;
     emit(ShopAppChangeFavoriteState());
-    DioHelper.postData(
+     DioHelper.postData(
       url: myFavorites,
       token: token,
       date: {
@@ -107,6 +108,7 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
         favorites[productId] = !favorites[productId]!;
       } else {
         getFavorites();
+        SearchCubit.get(context).emit(SearchSuccessState());
       }
       emit(ShopAppSuccessChangeFavoriteState(changeFavoritesModel!));
       print(value.data);
@@ -120,13 +122,12 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
   UserDataModel? profileModel;
 
   void getProfileModel() {
-    emit(ShopAppLoadingHomeDataState());
     DioHelper.getData(
       url: profile,
       token: token,
     ).then((value) {
       profileModel = UserDataModel.fromJson(value.data);
-      printFullText(profileModel!.data!.name!);
+      printFullText("${value.data}");
       emit(ShopAppSuccessProfileModelState(profileModel!));
     }).catchError((error) {
       emit(ShopAppErrorProfileModelState());
@@ -152,29 +153,12 @@ class ShopAppCubit extends Cubit<ShopAppStates> {
       },
     ).then((value) {
       updateProfile = UserDataModel.fromJson(value.data);
-      print(updateProfile!.message);
-      getProfileModel();
+      // print(updateProfile!.message);
       emit(ShopAppSuccessUpdateUserDataState(updateProfile!));
-      print(value.data);
+      // print(value.data);
     }).catchError((error) {
       emit(ShopAppErrorUpdateUserDataState());
       print('error is ${error.toString()}');
     });
   }
-  // UpdateData? updateData;
-  //
-  // void getUpdateData() {
-  //   emit(ShopAppLoadingHomeDataState());
-  //   DioHelper.getData(
-  //     url: profile,
-  //     token: token,
-  //   ).then((value) {
-  //     profileModel = UserDataModel.fromJson(value.data);
-  //     printFullText(profileModel!.data!.name!);
-  //     emit(ShopAppSuccessProfileModelState(profileModel!));
-  //   }).catchError((error) {
-  //     emit(ShopAppErrorProfileModelState());
-  //     print('error is ${error.toString()}');
-  //   });
-  // }
 }

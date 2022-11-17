@@ -27,14 +27,13 @@ void main() {
 
       if (onBoarding != false) {
         if (token != null) {
-          widget = ShopLayout();
+          widget = const ShopLayout();
         } else {
           widget = ShopLoginScreen();
         }
       } else {
         widget = OnBoardingScreen();
       }
-      print(onBoarding);
 
       runApp(MyApp(
         isDark: isDark,

@@ -1,3 +1,4 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mans/layout/shop_app/cubit/cubit.dart';
@@ -14,12 +15,16 @@ class CategoriesScreen extends StatelessWidget {
     return BlocConsumer<ShopAppCubit, ShopAppStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        return ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) => categoryBuilder(cubit.categoriesModel!.data.data[index]),
-            separatorBuilder: (context, index) => myDivider(),
-            itemCount: cubit.categoriesModel!.data.data.length);
+        return ConditionalBuilder(
+          condition: ShopAppCubit.get(context).categoriesModel != null,
+          builder: (context) => ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) => categoryBuilder(cubit.categoriesModel!.data.data[index]),
+              separatorBuilder: (context, index) => myDivider(),
+              itemCount: cubit.categoriesModel!.data.data.length),
+          fallback: (context) => const Center(child: CircularProgressIndicator()),
+        );
       },
     );
   }

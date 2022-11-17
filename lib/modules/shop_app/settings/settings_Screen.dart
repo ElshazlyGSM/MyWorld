@@ -17,20 +17,19 @@ class SettingsScreen extends StatelessWidget {
     var phoneController = TextEditingController();
     return BlocConsumer<ShopAppCubit, ShopAppStates>(
       listener: (context, state) {
-        if (state is ShopAppSuccessProfileModelState){
-          ///error want to do
-          //showToast(msg: state.userDataModel.message!, state: ToastState.error);
-          // print(state.userDataModel.message!);
-        }
-
+        // if (state is ShopAppSuccessProfileModelState){
+        ///   ///error want to do
+        //   //showToast(msg: state.userDataModel.message!, state: ToastState.error);
+        //   // print(state.userDataModel.message!);
+        // }
       },
       builder: (context, state) {
-        var cubit = ShopAppCubit.get(context).profileModel;
-        nameController.text = cubit!.data!.name!;
-        emailController.text = cubit.data!.email!;
-        phoneController.text = cubit.data!.phone!;
+        var cubit = ShopAppCubit.get(context);
+        nameController.text = cubit.profileModel!.data!.name!;
+        emailController.text = cubit.profileModel!.data!.email!;
+        phoneController.text = cubit.profileModel!.data!.phone!;
         return ConditionalBuilder(
-          condition: state is! ShopAppLoadingHomeDataState,
+          condition: cubit.profileModel != null,
           builder: (context) => Padding(
             padding: const EdgeInsets.all(20.0),
             child: Form(

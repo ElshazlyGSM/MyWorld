@@ -17,14 +17,14 @@ class FavoritesScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return ConditionalBuilder(
-          condition: state is! ShopAppLoadingSuccessFavoritesState,
+          condition:  ShopAppCubit.get(context).favorites != null,
           builder: (context) => ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (context, index) => buildGradView(
                   cubit.favoritesModel!.data!.data![index], context),
               separatorBuilder: (context, index) => myDivider(),
-              itemCount: cubit.favoritesModel!.data!.data!.length),
+              itemCount: cubit.favoritesModel != null? cubit.favoritesModel!.data!.data!.length : 0),
           fallback: (context) => const Center(child: CircularProgressIndicator()),
         );
       },
@@ -108,14 +108,12 @@ class FavoritesScreen extends StatelessWidget {
                           IconButton(
                             padding: EdgeInsets.zero,
                             onPressed: () {
-                              ShopAppCubit.get(context).changeFavorites(model.product!.id!);
+                              ShopAppCubit.get(context).changeFavorites(model.product!.id!,context);
                             },
                             icon: CircleAvatar(
                               radius: 18,
                               backgroundColor:
-                                  ShopAppCubit.get(context).favorites[model.product!.id]!
-                                      ? defaultColor
-                                      : Colors.grey,
+                              defaultColor,
                               child: const Icon(
                                 Icons.favorite_border,
                                 color: Colors.white,

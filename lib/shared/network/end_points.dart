@@ -5,3 +5,4 @@ const myFavorites = 'favorites';
 const profile = 'profile';
 const register = 'register';
 const updateProfileE = 'update-profile';
+const productsSearch = 'products/search';
